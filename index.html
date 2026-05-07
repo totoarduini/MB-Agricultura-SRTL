@@ -330,7 +330,7 @@ function renderPI(){
   let h = `<div class="pills">`;
   for(const t of tipos){
     const col = TCOLORS[t]||"#2563eb";
-    h += `<button class="pill${t===piTipo?" on":""}" style="${t===piTipo?`background:${col};border-color:${col}`:`color:${col};border-color:${col}`}" onclick="setPiTipo('${t}')">${t}s</button>`;
+    h += `<button class="pill${t===piTipo?" on":""}" style="${t===piTipo?`background:${col};border-color:${col}`:`color:${col};border-color:${col}`}" onclick="setPiTipo('${t}')">${TLAB[t]||t+'s'}</button>`;
   }
   h += `</div>` + leyenda();
 
@@ -1169,10 +1169,17 @@ function aplicarPeriodo(key){
     // 1) Exacto dentro del tipo
     let ins = insDelTipo.find(i => normNombre(i.nombre) === normC);
     // 2) Parcial: sheet tiene nombre más largo que el insumo
-    //    Ej: "Aceite mso" → "Aceite", "Rizospray CS" → "Rizospray"
-    if(!ins) ins = insDelTipo.find(i => normC.includes(normNombre(i.nombre)));
-    // 3) Parcial inverso: insumo empieza con el concepto (mínimo 4 chars para evitar falsos)
-    if(!ins) ins = insDelTipo.find(i => normNombre(i.nombre).startsWith(normC) && normC.length >= 4);
+    //    Excluye casos donde el concepto empieza con el insumo + espacio (evita "Siembra al voleo" → "Siembra")
+    if(!ins) ins = insDelTipo.find(i => {
+      const n = normNombre(i.nombre);
+      if(normC.startsWith(n + ' ')) return false;
+      return normC.includes(n);
+    });
+    // 3) Parcial inverso: insumo empieza con el concepto (mínimo 4 chars, límite de palabra)
+    if(!ins) ins = insDelTipo.find(i => {
+      const n = normNombre(i.nombre);
+      return n.startsWith(normC) && normC.length >= 4 && (n.length === normC.length || n[normC.length] === ' ');
+    });
     // 4) Fallback global: solo match exacto (sin filtro de tipo)
     if(!ins) ins = INSUMOS.find(i => normNombre(i.nombre) === normC);
 
