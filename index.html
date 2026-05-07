@@ -722,7 +722,7 @@ function renderRMB(){
   h+=`<div class="card" style="overflow:hidden"><div class="ch">📈 Margen Bruto por Cultivo</div>
   <div style="overflow-x:auto"><table><thead><tr>
     <th class="l">Cultivo</th>
-    <th style="background:#eff6ff">Ha</th>
+    <th style="background:#eff6ff;display:none">Ha</th>
     <th style="background:#e0f2fe">%</th>
     <th style="background:#f0fdf4">Rinde<br><small>kg/ha</small></th>
     <th style="background:#fffbeb">P.Bruto<br><small>U$S/t</small></th>
@@ -753,7 +753,7 @@ function renderRMB(){
     const bgRow = indent ? 'style="background:#fffde7"' : '';
     return `<tr ${bgRow}>
       ${nameCell}
-      <td style="background:#eff6ff44">${supCell}</td>
+      <td style="background:#eff6ff44;display:none">${supCell}</td>
       <td style="background:#e0f2fe44;text-align:center">${pctCell}</td>
       <td style="background:#f0fdf444"><span class="ro g">${r.plan.rinde.toLocaleString('es-AR')}</span></td>
       <td style="background:#fffbeb44"><span class="ro b">${prod?f(prod.pb,0):'-'}</span></td>
@@ -1222,29 +1222,12 @@ function aplicarPeriodo(key){
 const LS_KEY = 'mb5_estado_v1';
 
 function guardarEstado(){
-  try{
-    const estado = {
-      PLANTEOS, INSUMOS, PRODUCTOS, SUPERFICIE,
-      ALQ_QQ, DOSIS_DETALLE, nextId
-    };
-    localStorage.setItem(LS_KEY, JSON.stringify(estado));
-  } catch(e){ console.warn('Error guardando estado:', e); }
+  // Cache desactivado — los parámetros del modelo son siempre los valores por defecto
 }
 
 function cargarEstado(){
-  try{
-    const raw = localStorage.getItem(LS_KEY);
-    if(!raw) return false;
-    const e = JSON.parse(raw);
-    if(e.PLANTEOS)   PLANTEOS      = e.PLANTEOS;
-    if(e.INSUMOS)    INSUMOS       = e.INSUMOS;
-    if(e.PRODUCTOS)  PRODUCTOS     = e.PRODUCTOS;
-    if(e.SUPERFICIE) SUPERFICIE    = e.SUPERFICIE;
-    if(e.ALQ_QQ !== undefined) ALQ_QQ = e.ALQ_QQ;
-    if(e.DOSIS_DETALLE) DOSIS_DETALLE = e.DOSIS_DETALLE;
-    if(e.nextId !== undefined) nextId = e.nextId;
-    return true;
-  } catch(e){ console.warn('Error cargando estado:', e); return false; }
+  // Cache desactivado — siempre se usan los parámetros fijos del modelo
+  return false;
 }
 
 // ═══════════════════════════════════════════
